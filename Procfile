@@ -1,1 +1,1 @@
-worker: discord_bot
+worker: bin/owl
