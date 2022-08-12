@@ -30,7 +30,7 @@ func main() {
 	// 直近の関数（main）の最後に実行される
 	defer discord.Close()
 
-	fmt.Println("Listening...")
+	fmt.Println("owl is running")
 	stopBot := make(chan os.Signal, 1)
 	signal.Notify(stopBot, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-stopBot
