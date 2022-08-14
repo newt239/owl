@@ -8,6 +8,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/jomei/notionapi"
+	"github.com/newt239/owl/functions"
 	"google.golang.org/api/option"
 	"google.golang.org/api/youtube/v3"
 )
@@ -56,7 +57,7 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 							},
 						},
 						"URL": notionapi.URLProperty{
-							URL: arr[0],
+							URL: "https://youtube.com/watch?v=" + videoId,
 						},
 					},
 					Children: descriptionParagraph,
@@ -92,6 +93,15 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					Color: 16777215,
 				})
 			}
+		}
+		if m.Content == "weather" || m.Content == "天気" {
+			functions.GetWeather(s)
+		}
+		if m.Content == "narou" {
+			functions.GetNarou(s)
+		}
+		if m.Content == "ship" {
+			functions.GetShipNews(s)
 		}
 	}
 }
