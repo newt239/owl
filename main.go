@@ -5,10 +5,12 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/joho/godotenv"
 
+	"github.com/newt239/owl/functions"
 	"github.com/newt239/owl/handlers"
 )
 
@@ -27,10 +29,19 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// 直近の関数（main）の最後に実行される
 	defer discord.Close()
 
 	fmt.Println("owl is running")
+
+	ticker := time.NewTicker(time.Hour)
+	fmt.Println("タイマーを開始")
+	go func() {
+		for t := range ticker.C {
+			fmt.Println(t)
+			functions.GetShipNews(discord)
+		}
+	}()
+
 	stopBot := make(chan os.Signal, 1)
 	signal.Notify(stopBot, syscall.SIGINT, syscall.SIGTERM, os.Interrupt)
 	<-stopBot
