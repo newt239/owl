@@ -20,9 +20,15 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			client := notionapi.NewClient(notionapi.Token(os.Getenv("NOTION_API_KEY")))
 			database, _ := client.Database.Get(context.Background(), notionapi.DatabaseID(os.Getenv("MUSIC_DATABASE_ID")))
 			arr := strings.Split(m.Content, " ")
-			if strings.Contains(arr[0], "youtube.com") {
+			if strings.Contains(arr[0], "youtube.com") || strings.Contains(arr[0], "youtu.be") {
 				service, _ := youtube.NewService(context.Background(), option.WithAPIKey(os.Getenv("YOUTUBE_API_KEY")))
-				videoList, _ := service.Videos.List([]string{"snippet"}).Id(strings.Split(arr[0], "?v=")[1]).Do()
+				var videoId string
+				if strings.Contains(arr[0], "youtube.com") {
+					videoId = strings.Split(arr[0], "?v=")[1]
+				} else if strings.Contains(arr[0], "youtu.be") {
+					videoId = strings.Split(arr[0], "/")[2]
+				}
+				videoList, _ := service.Videos.List([]string{"snippet"}).Id(videoId).Do()
 				video := videoList.Items[0]
 				descriptionParagraph := []notionapi.Block{}
 				for _, v := range strings.Split(video.Snippet.Description, "\n\n") {
