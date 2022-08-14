@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/jomei/notionapi"
@@ -92,6 +93,24 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 					// https://gist.github.com/thomasbnt/b6f455e2c7d743b796917fa3c205f812
 					Color: 16777215,
 				})
+			} else if strings.Contains(m.Content, "https://discord.com/channels/") {
+				channelId := strings.Split(m.Content, "/")[5]
+				messageId := strings.Split(m.Content, "/")[6]
+				message, _ := s.ChannelMessage(channelId, messageId)
+				channel, _ := s.Channel(channelId)
+				result, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+					Description: message.Content,
+					Color:       15158332,
+					Timestamp:   message.Timestamp.Format(time.RFC3339),
+					Author: &discordgo.MessageEmbedAuthor{
+						Name:    message.Author.Username,
+						IconURL: message.Author.AvatarURL(""),
+					},
+					Footer: &discordgo.MessageEmbedFooter{
+						Text: channel.Name,
+					},
+				})
+				fmt.Println(result, err)
 			}
 		}
 		if m.Content == "weather" || m.Content == "天気" {
