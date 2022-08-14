@@ -35,13 +35,17 @@ func main() {
 
 	functions.GetShipNews(discord)
 	functions.GetNarou(discord)
-	ticker := time.NewTicker(time.Hour * 5)
+
+	ticker := time.NewTicker(time.Hour)
 	fmt.Println("タイマーを開始")
 	go func() {
 		for t := range ticker.C {
 			fmt.Println(t)
 			functions.GetShipNews(discord)
 			functions.GetNarou(discord)
+			if t.Hour() == 6 {
+				functions.GetWeather(discord)
+			}
 		}
 	}()
 
