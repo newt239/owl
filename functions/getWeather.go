@@ -2,7 +2,6 @@ package functions
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -65,11 +64,11 @@ func GetWeather(discord *discordgo.Session) {
 	var response WeatherResponseStruct
 	json.Unmarshal(body, &response)
 
-	pops := response[0].TimeSeries[0].Areas[1].Pops
+	pops := response[0].TimeSeries[1].Areas[1].Pops
 	timeDefines := response[0].TimeSeries[1].TimeDefines
 
 	if strings.Contains(response[0].TimeSeries[0].Areas[1].Weathers[0], "雨") {
-		title := "埼玉県南部の天気 - " + response[0].ReportDatetime.Format(time.Kitchen) + "発表\n"
+		title := "埼玉県南部の天気 - " + strconv.Itoa(response[0].ReportDatetime.Hour()) + "時発表\n"
 		day1Weather := strings.ReplaceAll(response[0].TimeSeries[0].Areas[1].Weathers[0], "晴れ", "🌞晴れ")
 		day1Weather = strings.ReplaceAll(day1Weather, "くもり", "☁くもり")
 		day1Weather = strings.ReplaceAll(day1Weather, "雨", "☔雨")
@@ -80,9 +79,15 @@ func GetWeather(discord *discordgo.Session) {
 				body += "\n> 降水確率\n"
 			}
 			weatherCount, _ := strconv.Atoi(pops[i])
-			fmt.Println(weatherCount)
-			icon := strings.Repeat("🌧", weatherCount) + strings.Repeat("➖", 10-weatherCount/10)
-			body += "`" + strconv.Itoa(timeDefines[i].Hour()) + "時` " + icon + " " + pops[i] + "%\n"
+			icon := strings.Repeat("🌧", weatherCount/10) + strings.Repeat("➖", 10-weatherCount/10)
+			hour := timeDefines[i].Hour()
+			var hourStr string
+			if hour < 10 {
+				hourStr = "0" + strconv.Itoa(hour)
+			} else {
+				hourStr = strconv.Itoa(hour)
+			}
+			body += "`" + hourStr + "時` " + icon + " " + pops[i] + "%\n"
 		}
 		discord.ChannelMessageSendEmbed(weatherChannel.ID, &discordgo.MessageEmbed{
 			Title:       title,

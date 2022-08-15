@@ -98,7 +98,7 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				messageId := strings.Split(m.Content, "/")[6]
 				message, _ := s.ChannelMessage(channelId, messageId)
 				channel, _ := s.Channel(channelId)
-				result, err := s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
+				s.ChannelMessageSendEmbed(m.ChannelID, &discordgo.MessageEmbed{
 					Description: message.Content,
 					Color:       15158332,
 					Timestamp:   message.Timestamp.Format(time.RFC3339),
@@ -110,7 +110,6 @@ func OnMessageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						Text: channel.Name,
 					},
 				})
-				fmt.Println(result, err)
 			}
 		}
 		if m.Content == "weather" || m.Content == "天気" {
