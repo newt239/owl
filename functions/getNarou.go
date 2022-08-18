@@ -1,7 +1,6 @@
 package functions
 
 import (
-	"os"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -9,11 +8,8 @@ import (
 )
 
 func GetNarou(discord *discordgo.Session) {
-	configChannel, _ := discord.Channel(os.Getenv("CHANNEL_ID"))
-	configMessage, _ := discord.ChannelMessage(configChannel.ID, configChannel.LastMessageID)
-	channelId := strings.Split(configMessage.Content, "\n")[1]
-	shnewsChannel, _ := discord.Channel(channelId)
-	message, _ := discord.ChannelMessage(channelId, shnewsChannel.LastMessageID)
+	narouChannel, _ := discord.Channel(GetConfig(discord, "NAROU_CHANNEL"))
+	message, _ := discord.ChannelMessage(narouChannel.ID, narouChannel.LastMessageID)
 	lastUrl := message.Content
 
 	c := colly.NewCollector()
@@ -29,6 +25,6 @@ func GetNarou(discord *discordgo.Session) {
 	c.Visit("https://ncode.syosetu.com/n2267be/")
 
 	for i := 0; i < len(newLinkList); i++ {
-		discord.ChannelMessageSend(shnewsChannel.ID, newLinkList[i])
+		discord.ChannelMessageSend(narouChannel.ID, newLinkList[i])
 	}
 }

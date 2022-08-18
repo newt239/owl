@@ -43,7 +43,7 @@ func main() {
 			fmt.Println(t)
 			functions.GetShipNews(discord)
 			functions.GetNarou(discord)
-			if t.Hour() == 6 {
+			if t.Hour() == 5 {
 				functions.GetWeather(discord)
 			}
 		}

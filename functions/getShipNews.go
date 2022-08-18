@@ -1,19 +1,13 @@
 package functions
 
 import (
-	"os"
-	"strings"
-
 	"github.com/bwmarrin/discordgo"
 	"github.com/gocolly/colly"
 )
 
 func GetShipNews(discord *discordgo.Session) {
-	configChannel, _ := discord.Channel(os.Getenv("CHANNEL_ID"))
-	configMessage, _ := discord.ChannelMessage(configChannel.ID, configChannel.LastMessageID)
-	channelId := strings.Split(configMessage.Content, "\n")[0]
-	shnewsChannel, _ := discord.Channel(channelId)
-	message, _ := discord.ChannelMessage(channelId, shnewsChannel.LastMessageID)
+	shnewsChannel, _ := discord.Channel(GetConfig(discord, "SHNEWS_CHANNEL"))
+	message, _ := discord.ChannelMessage(shnewsChannel.ID, shnewsChannel.LastMessageID)
 	lastUrl := message.Content
 
 	c := colly.NewCollector()

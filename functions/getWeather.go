@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -51,10 +50,7 @@ type WeatherResponseStruct []struct {
 }
 
 func GetWeather(discord *discordgo.Session) {
-	configChannel, _ := discord.Channel(os.Getenv("CHANNEL_ID"))
-	configMessage, _ := discord.ChannelMessage(configChannel.ID, configChannel.LastMessageID)
-	channelId := strings.Split(configMessage.Content, "\n")[2]
-	weatherChannel, _ := discord.Channel(channelId)
+	weatherChannel, _ := discord.Channel(GetConfig(discord, "WEATHER_CHANNEL"))
 
 	url := "https://www.jma.go.jp/bosai/forecast/data/forecast/110000.json"
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
